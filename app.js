@@ -1,5 +1,4 @@
 // CampusFix demo app. Configure Supabase in the two constants below.
-
 const SUPABASE_URL = "https://bfdyvptqzrcpxtrjyxxc.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_FsTHXVkuY5tAcq721iZFxA_OZK0R3w7";
 const isConfigured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && !SUPABASE_ANON_KEY.includes("PASTE_");
@@ -8,6 +7,47 @@ const client = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABAS
 const $ = (id) => document.getElementById(id);
 let complaints = [];
 const table = "complaints";
+
+// DEMO ONLY: this password is visible in browser code and is NOT real security.
+const DEMO_STAFF_PASSWORD = "CampusFix2026";
+let currentRole = null;
+function showRoleChooser() {
+  currentRole = null;
+  $("roleChooser").hidden = false; $("staffLogin").hidden = true; $("appContent").hidden = true;
+  $("staffPassword").value = ""; $("loginMessage").textContent = "";
+}
+function enterPortal(role) {
+  currentRole = role; $("roleChooser").hidden = true; $("staffLogin").hidden = true; $("appContent").hidden = false;
+  const isStaff = role === "staff";
+  $("currentRoleLabel").textContent = isStaff ? "Authorised Person — Service Desk" : "Student Portal";
+  $("staffStats").hidden = !isStaff; $("staffPanel").hidden = !isStaff; $("studentTracker").hidden = isStaff;
+  $("complaintForm").closest(".panel").hidden = false;
+  $("submitBtn").hidden = isStaff;
+  const formHeading = $("complaintForm").closest(".panel").querySelector(".section-heading");
+  formHeading.querySelector("h2").textContent = isStaff ? "Student ticket submission is disabled in staff view" : "Report a campus issue";
+  $("complaintForm").hidden = isStaff;
+  if (isStaff) loadComplaints();
+}
+$("studentRole").addEventListener("click", () => enterPortal("student"));
+$("staffRole").addEventListener("click", () => { $("roleChooser").hidden = true; $("staffLogin").hidden = false; });
+$("backToRoles").addEventListener("click", showRoleChooser);
+$("switchRole").addEventListener("click", showRoleChooser);
+$("staffLoginForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if ($("staffPassword").value === DEMO_STAFF_PASSWORD) enterPortal("staff");
+  else setMessage("loginMessage", "Incorrect demo password.", true);
+});
+$("trackBtn").addEventListener("click", async () => {
+  const email = $("trackEmail").value.trim().toLowerCase();
+  const out = $("studentTicketList");
+  if (!email) { out.innerHTML = '<div class="empty">Please enter your email.</div>'; return; }
+  if (!client) { out.innerHTML = '<div class="empty">Database is not configured.</div>'; return; }
+  out.innerHTML = '<div class="empty">Searching tickets…</div>';
+  const {data,error} = await client.from(table).select("ticket_code,title,category,location,status,created_at,description,student_email").eq("student_email", email).order("created_at", {ascending:false});
+  if (error) { out.innerHTML = `<div class="empty">Could not search tickets: ${escapeHTML(error.message)}</div>`; return; }
+  if (!data || !data.length) { out.innerHTML = '<div class="empty">No tickets found for this email.</div>'; return; }
+  out.innerHTML = data.map(c => `<article class="ticket"><div><h3>${escapeHTML(c.title)} <span class="tag">${escapeHTML(c.ticket_code || "Ticket")}</span></h3><div class="ticket-meta"><span class="tag ${statusClass(c.status)}">${escapeHTML(c.status)}</span><span class="tag">${escapeHTML(c.category)}</span></div><p>${escapeHTML(c.description)}</p><p>${escapeHTML(c.location)} · ${escapeHTML(formatDate(c.created_at))}</p></div></article>`).join("");
+});
 
 function setMessage(id, text, isError=false) {
   const el = $(id); el.textContent = text; el.classList.toggle("error", isError);
@@ -87,7 +127,10 @@ $("complaintForm").addEventListener("submit", async (event) => {
   btn.disabled = false;
   if (error) { setMessage("formMessage","Could not save: "+error.message,true); return; }
   $("complaintForm").reset(); setMessage("formMessage","Complaint submitted successfully.");
-  await loadComplaints();
+  if (currentRole === "student") {
+    $("trackEmail").value = payload.student_email;
+    $("trackBtn").click();
+  }
 });
 $("complaintList").addEventListener("click", async (event) => {
   const editId = event.target.dataset.edit, deleteId = event.target.dataset.delete;
@@ -118,4 +161,3 @@ $("closeDialog").addEventListener("click",closeDialog);
 $("cancelEdit").addEventListener("click",closeDialog);
 $("refreshBtn").addEventListener("click",loadComplaints);
 ["searchBox","statusFilter","categoryFilter"].forEach(id => $(id).addEventListener("input",renderComplaints));
-loadComplaints();
