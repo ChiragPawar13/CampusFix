@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CampusFix | Campus Complaint Management</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon">CF</span><div><strong>CampusFix</strong><small>Campus Complaint Management</small></div></div>
+    <span class="connection" id="connectionState">Not connected</span>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <div><p class="eyebrow">SMART CAMPUS • SERVICE DESK</p><h1>Make campus better,<br><span>one report at a time.</span></h1>
+      <p class="subtext">Submit an issue, track its status, and help the campus team resolve it.</p></div>
+      <div class="hero-mark" aria-hidden="true">✓</div>
+    </section>
+
+    <section class="stats">
+      <article class="stat"><span>Total complaints</span><strong id="totalCount">0</strong><small>All submitted reports</small></article>
+      <article class="stat"><span>Open</span><strong id="openCount">0</strong><small>Waiting for action</small></article>
+      <article class="stat"><span>In progress</span><strong id="progressCount">0</strong><small>Being handled</small></article>
+      <article class="stat"><span>Resolved</span><strong id="resolvedCount">0</strong><small>Marked complete</small></article>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">NEW TICKET</p><h2>Report a campus issue</h2></div><span class="pill">Takes about 1 minute</span></div>
+      <form id="complaintForm">
+        <div class="form-grid">
+          <label>Student name<input id="studentName" maxlength="100" required placeholder="e.g. Aditi Sharma"></label>
+          <label>Email<input id="studentEmail" type="email" maxlength="150" required placeholder="student@example.com"></label>
+          <label>Issue category<select id="category" required><option value="">Choose category</option><option>Wi-Fi / Internet</option><option>Classroom equipment</option><option>Electrical</option><option>Water / Plumbing</option><option>Cleanliness</option><option>Laboratory equipment</option><option>Other</option></select></label>
+          <label>Location<input id="location" maxlength="120" required placeholder="e.g. Lab 204"></label>
+          <label>Priority<select id="priority"><option>Normal</option><option>Low</option><option>High</option></select></label>
+          <label>Short title<input id="title" maxlength="120" required placeholder="e.g. Projector not working"></label>
+        </div>
+        <label>Description<textarea id="description" rows="3" maxlength="1200" required placeholder="Describe the issue clearly..."></textarea></label>
+        <button class="primary" type="submit" id="submitBtn">Submit complaint</button>
+        <p class="message" id="formMessage" role="status"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">SERVICE DESK</p><h2>Complaint register</h2><p class="subtext small">Search tickets and update their status. Demo data only—do not enter sensitive personal information.</p></div></div>
+      <div class="filters">
+        <input id="searchBox" placeholder="Search title, name, location..." aria-label="Search complaints">
+        <select id="statusFilter" aria-label="Filter by status"><option value="">All statuses</option><option>Open</option><option>In Progress</option><option>Resolved</option></select>
+        <select id="categoryFilter" aria-label="Filter by category"><option value="">All categories</option><option>Wi-Fi / Internet</option><option>Classroom equipment</option><option>Electrical</option><option>Water / Plumbing</option><option>Cleanliness</option><option>Laboratory equipment</option><option>Other</option></select>
+        <button class="secondary" id="refreshBtn" type="button">Refresh</button>
+      </div>
+      <div id="complaintList" class="complaint-list"><div class="empty">Connect your database to load complaints.</div></div>
+    </section>
+    <footer>CampusFix DBMS Mini Project • Built with HTML, CSS, JavaScript and Supabase PostgreSQL</footer>
+  </main>
+  <dialog id="editDialog">
+    <form id="editForm" method="dialog">
+      <div class="section-heading"><div><p class="eyebrow">TICKET MANAGEMENT</p><h2>Update complaint</h2></div><button class="icon-button" type="button" id="closeDialog" aria-label="Close">×</button></div>
+      <input type="hidden" id="editId">
+      <label>Status<select id="editStatus"><option>Open</option><option>In Progress</option><option>Resolved</option></select></label>
+      <label>Assigned staff<input id="editAssigned" maxlength="100" placeholder="e.g. Facilities Team"></label>
+      <label>Resolution note<textarea id="editResolution" rows="3" maxlength="1000" placeholder="Optional note about the action taken"></textarea></label>
+      <div class="dialog-actions"><button type="button" class="secondary" id="cancelEdit">Cancel</button><button type="submit" class="primary">Save changes</button></div>
+      <p class="message" id="editMessage"></p>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
