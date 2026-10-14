@@ -1,6 +1,6 @@
 // CampusFix demo app. Configure Supabase in the two constants below.
 const SUPABASE_URL = "https://bfdyvptqzrcpxtrjyxxc.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+const SUPABASE_ANON_KEY = "sb_publishable_FsTHXVkuY5tAcq721iZFxA_OZK0R3w7";
 const isConfigured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && !SUPABASE_ANON_KEY.includes("PASTE_");
 const client = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -117,14 +117,4 @@ $("closeDialog").addEventListener("click",closeDialog);
 $("cancelEdit").addEventListener("click",closeDialog);
 $("refreshBtn").addEventListener("click",loadComplaints);
 ["searchBox","statusFilter","categoryFilter"].forEach(id => $(id).addEventListener("input",renderComplaints));
-loadComplaints();st {error} = await client.from(table).delete().eq("id", deleteId);
-    if (error) alert("Delete failed: "+error.message); else await loadComplaints();
-  }
-});
-$("editForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!client) return;
-  const id = $("editId").value;
-  const changes = {status:$("editStatus").value, assigned_to:$("editAssigned").value.trim() || null, resolution_note:$("editResolution").value.trim() || null};
-  const {error} = await client.from(table).update(changes).eq("id",id);
-  if (error) { 
+loadComplaints();
