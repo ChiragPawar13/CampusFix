@@ -1,4 +1,5 @@
 // CampusFix demo app. Configure Supabase in the two constants below.
+
 const SUPABASE_URL = "https://bfdyvptqzrcpxtrjyxxc.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_FsTHXVkuY5tAcq721iZFxA_OZK0R3w7";
 const isConfigured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && !SUPABASE_ANON_KEY.includes("PASTE_");
