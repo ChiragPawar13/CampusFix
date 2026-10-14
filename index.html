@@ -13,13 +13,31 @@
     <span class="connection" id="connectionState">Not connected</span>
   </header>
   <main class="container">
+    <section class="role-panel" id="roleChooser">
+      <p class="eyebrow">WELCOME TO CAMPUSFIX</p>
+      <h1>Who is using CampusFix?</h1>
+      <p class="subtext">Choose your role to continue.</p>
+      <div class="role-options">
+        <button class="role-card" id="studentRole" type="button"><span class="role-icon">🎓</span><strong>Student</strong><small>Submit a new ticket and track your complaints.</small></button>
+        <button class="role-card" id="staffRole" type="button"><span class="role-icon">🛠️</span><strong>Authorised Person</strong><small>Manage tickets and mark issues as resolved.</small></button>
+      </div>
+      <p class="role-note">Student demo: enter your email to view matching tickets. Staff access is demo-only.</p>
+    </section>
+    <section class="role-panel" id="staffLogin" hidden>
+      <p class="eyebrow">STAFF ACCESS</p><h2>Authorised Person Login</h2>
+      <p class="subtext">Enter the demo password to open the Service Desk.</p>
+      <form id="staffLoginForm"><label>Demo password<input id="staffPassword" type="password" required autocomplete="current-password" placeholder="Enter password"></label><button class="primary" type="submit">Login</button><button class="secondary" id="backToRoles" type="button">Back</button><p class="message error" id="loginMessage"></p></form>
+    </section>
+    <div id="appContent" hidden>
+      <div class="role-bar"><span id="currentRoleLabel">Student Portal</span><button class="secondary" id="switchRole" type="button">Switch role / Log out</button></div>
+
     <section class="hero">
       <div><p class="eyebrow">SMART CAMPUS • SERVICE DESK</p><h1>Make campus better,<br><span>one report at a time.</span></h1>
       <p class="subtext">Submit an issue, track its status, and help the campus team resolve it.</p></div>
       <div class="hero-mark" aria-hidden="true">✓</div>
     </section>
 
-    <section class="stats">
+    <section class="stats" id="staffStats">
       <article class="stat"><span>Total complaints</span><strong id="totalCount">0</strong><small>All submitted reports</small></article>
       <article class="stat"><span>Open</span><strong id="openCount">0</strong><small>Waiting for action</small></article>
       <article class="stat"><span>In progress</span><strong id="progressCount">0</strong><small>Being handled</small></article>
@@ -43,7 +61,14 @@
       </form>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="studentTracker" hidden>
+      <div class="section-heading"><div><p class="eyebrow">TRACK TICKET</p><h2>Track your complaints</h2><p class="subtext small">Enter the email used when you submitted a complaint.</p></div></div>
+      <label>Your email<input id="trackEmail" type="email" placeholder="student@example.com"></label>
+      <button class="primary" id="trackBtn" type="button">Find my tickets</button>
+      <div id="studentTicketList" class="complaint-list" style="margin-top:14px"><div class="empty">Enter your email to search for tickets.</div></div>
+    </section>
+
+    <section class="panel" id="staffPanel">
       <div class="section-heading"><div><p class="eyebrow">SERVICE DESK</p><h2>Complaint register</h2><p class="subtext small">Search tickets and update their status. Demo data only—do not enter sensitive personal information.</p></div></div>
       <div class="filters">
         <input id="searchBox" placeholder="Search title, name, location..." aria-label="Search complaints">
@@ -54,6 +79,7 @@
       <div id="complaintList" class="complaint-list"><div class="empty">Connect your database to load complaints.</div></div>
     </section>
     <footer>CampusFix DBMS Mini Project • Built with HTML, CSS, JavaScript and Supabase PostgreSQL</footer>
+    </div>
   </main>
   <dialog id="editDialog">
     <form id="editForm" method="dialog">
